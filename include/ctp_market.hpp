@@ -36,7 +36,7 @@ class CtpMarket : public CThostFtdcMdSpi {
             for (int i = 0; i < contracts.size(); i++) {
                 instruments[i] = const_cast<char*>(contracts[i].c_str());
             }
-            while(md_ptr->SubscribeMarketData(instruments, 1) != 0) {
+            while(md_ptr->SubscribeMarketData(instruments, contracts.size()) != 0) {
                 LOG_INFO("try subscribe {0}.", contracts.size());
                 sleep(3);
             }
@@ -53,6 +53,11 @@ class CtpMarket : public CThostFtdcMdSpi {
             login();
         }
         
+        // 订阅行情通知
+        void OnRspSubMarketData(CThostFtdcSpecificInstrumentField *pSpecificInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
+            LOG_INFO("成功订阅 {0}.", pSpecificInstrument->InstrumentID);
+        };
+
         // 行情通知
         virtual void OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarketData)=0;
 
