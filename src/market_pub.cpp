@@ -45,7 +45,7 @@ int main() {
     std::string investorId = "113458";
 
     // 获取市场全部合约
-    CtpTrade ctp_trade (userId, password, brokerId, investorId);
+    CtpTrade ctp_trade(userId, password, brokerId, investorId);
     ctp_trade.connect(td_dir, td_addr);
     ctp_trade.qryAllInstrument();
     while(!SymbolHolder::getInstance()->isReady()) {
@@ -57,7 +57,7 @@ int main() {
     // 准备要订阅的合约
     std::vector<std::string> contracts;
     std::vector<std::string> allContracts = SymbolHolder::getInstance()->getAllInstrument();
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < allContracts.size(); i++) {
         LOG_INFO("prepare to subscribe {0}.", allContracts[i]);
         contracts.push_back(allContracts[i]);
     }
@@ -69,6 +69,6 @@ int main() {
     std::shared_ptr<MarketPub> pub(new MarketPub(p));
     pub->connect(md_dir, md_addr);
     pub->subscribe(contracts);
-    
+
     sleep(30);
 }
