@@ -2,9 +2,12 @@
 
 #include <string>
 #include <memory>
+#include <iostream>
 #include <unistd.h>
 #include "ThostFtdcTraderApi.h"
 #include "log.hpp"
+#include "tools/conv.hpp"
+#include "symbol_holder.hpp"
 
 class CtpTrade : public CThostFtdcTraderSpi {
     public:
@@ -80,7 +83,10 @@ class CtpTrade : public CThostFtdcTraderSpi {
         }
 
         void OnRspQryInstrument(CThostFtdcInstrumentField *pInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
-            LOG_INFO("query instrument info {0}.", pInstrument->InstrumentName);
+            SymbolHolder::getInstance()->addSymbol(*pInstrument);
+            if (bIsLast == true) {
+                SymbolHolder::getInstance()->setReady();
+            }
         }
 
     private:

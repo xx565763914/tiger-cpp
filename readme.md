@@ -8,7 +8,7 @@ nanomsg
 
 cppnanomsg
 
-iconv
+boost
 
 
 # usage

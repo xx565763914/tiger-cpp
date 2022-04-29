@@ -11,6 +11,7 @@
 #include "pubsub/sub.hpp"
 #include "ctp_trade.hpp"
 #include "tools/conv.hpp"
+#include "symbol_holder.hpp"
 
 char* date(void) {
         time_t now = time(&now);
@@ -73,7 +74,10 @@ int main(int argc, char ** argv) {
     ctp_trade.connect(md_dir, md_addr);
     ctp_trade.qryAllInstrument();
 
-    sleep(30);
+    while(!SymbolHolder::getInstance()->isReady()) {
+        sleep(1);
+    }
+    sleep(3);
 
     // if (strcmp(argv[1], "server") == 0) {
     //     // server("ipc:///tmp/pubsub.ipc");
