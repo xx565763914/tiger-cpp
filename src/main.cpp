@@ -62,22 +62,29 @@ class Sub1 : public Subscribe {
 };
 
 int main(int argc, char ** argv) {
-    // 配置
-    std::string md_dir = "./flow_md/";
-    std::string md_addr = "tcp://180.168.146.187:10130";
-    std::string userId = "113458";
-    std::string password = "XX1024xx!@#$";
-    std::string brokerId = "9999";
-    std::string investorId = "113458";
 
-    CtpTrade ctp_trade (userId, password, brokerId, investorId);
-    ctp_trade.connect(md_dir, md_addr);
-    ctp_trade.qryAllInstrument();
-
-    while(!SymbolHolder::getInstance()->isReady()) {
-        sleep(1);
+    char *a = "xxxx";
+    std::vector<std::string> b = {a};
+    for (int i = 0; i < b.size(); i++) {
+        LOG_INFO("{0}", b[i]);
     }
-    sleep(3);
+
+    // 配置
+    // std::string md_dir = "./flow_md/";
+    // std::string md_addr = "tcp://180.168.146.187:10130";
+    // std::string userId = "113458";
+    // std::string password = "XX1024xx!@#$";
+    // std::string brokerId = "9999";
+    // std::string investorId = "113458";
+
+    // CtpTrade ctp_trade (userId, password, brokerId, investorId);
+    // ctp_trade.connect(md_dir, md_addr);
+    // ctp_trade.qryAllInstrument();
+
+    // while(!SymbolHolder::getInstance()->isReady()) {
+    //     sleep(1);
+    // }
+    // sleep(3);
 
     // if (strcmp(argv[1], "server") == 0) {
     //     // server("ipc:///tmp/pubsub.ipc");

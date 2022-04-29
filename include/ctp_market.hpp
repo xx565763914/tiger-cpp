@@ -32,7 +32,7 @@ class CtpMarket : public CThostFtdcMdSpi {
 
         // 订阅行情
         void subscribe(std::vector<std::string> &contracts) {
-            char **instruments = new char*[contracts.size()];
+            char *instruments[contracts.size()];
             for (int i = 0; i < contracts.size(); i++) {
                 instruments[i] = const_cast<char*>(contracts[i].c_str());
             }
@@ -41,7 +41,6 @@ class CtpMarket : public CThostFtdcMdSpi {
                 sleep(3);
             }
             LOG_INFO("subscribe succeed.");
-            delete instruments;
         }
 
         // 交易所回调
@@ -55,7 +54,13 @@ class CtpMarket : public CThostFtdcMdSpi {
         
         // 订阅行情通知
         void OnRspSubMarketData(CThostFtdcSpecificInstrumentField *pSpecificInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
-            LOG_INFO("成功订阅 {0}.", pSpecificInstrument->InstrumentID);
+            // LOG_INFO("成功订阅 {0} {1}.", pSpecificInstrument->InstrumentID, pRspInfo->ErrorID);
+            if (pRspInfo->ErrorID != 0) {
+                LOG_ERROR("订阅合约 [{0}] 失败.", pSpecificInstrument->InstrumentID);
+                LOG_INFO("重新订阅合约 [{0}].", pSpecificInstrument->InstrumentID);
+                std::vector<std::string> sub = {pSpecificInstrument->InstrumentID};
+                subscribe(sub);
+            }
         };
 
         // 行情通知

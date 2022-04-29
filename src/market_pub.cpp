@@ -22,7 +22,8 @@ class MarketPub : public CtpMarket {
 
         void OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarketData) {
             LOG_INFO("receive market data {0}", pDepthMarketData->LastPrice);
-
+            std::string data = "receive market data: " + std::to_string(pDepthMarketData->LastPrice);
+            pub->send(data);
         }
 
     private:
@@ -62,12 +63,12 @@ int main() {
     }
 
     // // 初始化行情分发器
-    std::shared_ptr<Publish> p(nullptr);
+    std::shared_ptr<Publish> p(new Publish(url));
 
     // 初始化ctp行情获取
     std::shared_ptr<MarketPub> pub(new MarketPub(p));
     pub->connect(md_dir, md_addr);
     pub->subscribe(contracts);
-
+    
     sleep(30);
 }
