@@ -1,7 +1,10 @@
 #pragma once
 
 #include <string>
+#include <nlohmann/json.hpp>
 #include "tools/conv.hpp"
+
+using json = nlohmann::json;
 
 struct Tick {
     // 交易日
@@ -50,6 +53,8 @@ struct Tick {
 	int ask_volume1;
     ///合约代码
 	std::string instrument_id;
+    
+    std::string exchange_inst_id;
 
     Tick(CThostFtdcDepthMarketDataField &d) {
         trading_day = Conv::GBKToUTF8(d.TradingDay);
@@ -75,5 +80,35 @@ struct Tick {
         ask_price1 = d.AskPrice1;
         ask_volume1 = d.AskVolume1;
         instrument_id = Conv::GBKToUTF8(d.InstrumentID);
+        exchange_inst_id = Conv::GBKToUTF8(d.ExchangeInstID);
     }
 };
+
+void to_json(json& j, const Tick& tick) {
+    j = json{
+        {"trading_day", tick.trading_day},
+        {"exchange_id", tick.exchange_id},
+        {"last_price", tick.last_price},
+        {"pre_settlement_price", tick.pre_settlement_price},
+        {"pre_close_price", tick.pre_close_price},
+        {"pre_open_interest", tick.pre_open_interest},
+        {"open_price", tick.open_price},
+        {"highest_price", tick.highest_price},
+        {"lowest_price", tick.lowest_price},
+        {"volume", tick.volume},
+        {"turnover", tick.turnover},
+        {"open_interest", tick.open_interest},
+        {"close_price", tick.close_price},
+        {"settlement_price", tick.settlement_price},
+        {"upper_limit_price", tick.upper_limit_price},
+        {"lower_limit_price", tick.lower_limit_price},
+        {"update_time", tick.update_time},
+        {"update_millisec", tick.update_millisec},
+        {"bid_price1", tick.bid_price1},
+        {"bid_volume1", tick.bid_volume1},
+        {"ask_price1", tick.ask_price1},
+        {"ask_volume1", tick.ask_volume1},
+        {"instrument_id", tick.instrument_id},
+        {"exchange_inst_id", tick.exchange_inst_id}
+    };
+}

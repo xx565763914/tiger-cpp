@@ -24,9 +24,8 @@ class MarketPub : public CtpMarket {
 
         void OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarketData) {
             Tick tick(*pDepthMarketData);
-            LOG_INFO("receive market data {0}", tick.last_price);
-            std::string data = "receive market data: " + std::to_string(tick.last_price);
-            pub->send(data);
+            json data = tick;
+            pub->send(data.dump());
         }
 
     private:

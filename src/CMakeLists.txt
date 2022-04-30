@@ -6,3 +6,6 @@ target_link_libraries(main PRIVATE thostmduserapi_se thosttraderapi_se spdlog na
 
 add_executable(market_pub market_pub.cpp)
 target_link_libraries(market_pub PRIVATE thostmduserapi_se thosttraderapi_se spdlog nanomsg boost_locale)
+
+
+

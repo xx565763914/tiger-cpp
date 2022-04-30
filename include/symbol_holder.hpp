@@ -3,11 +3,17 @@
 #include <boost/atomic.hpp>
 #include <vector>
 #include <memory>
+#include <regex>
 #include "log.hpp"
 #include "ThostFtdcTraderApi.h"
 
 class SymbolHolder {
     public:
+
+        SymbolHolder() {
+            contractReg = std::regex("[a-zA-Z]+[0-9]+$");
+        }
+
         bool isReady() {
             return ready;
         }
@@ -19,7 +25,9 @@ class SymbolHolder {
 
         // 在这里不必纠结性能问题
         void addSymbol(CThostFtdcInstrumentField symbol) {
-            LOG_INFO("查询到期货合约 {0}.", symbol.InstrumentID);
+            std::string contract = Conv::GBKToUTF8(symbol.InstrumentID);
+            bool isMatch = std::regex_match(contract, contractReg);
+            LOG_INFO("查询到期货合约 {0} {1}.", symbol.InstrumentID, isMatch);
             symbols.push_back(symbol);
         }
 
@@ -32,7 +40,11 @@ class SymbolHolder {
 
             std::vector<std::string> result;
             for (int i = 0; i < symbols.size(); i++) {
-                result.push_back(Conv::GBKToUTF8(symbols[i].InstrumentID));
+                std::string contract = Conv::GBKToUTF8(symbols[i].InstrumentID);
+                if (!std::regex_match(contract, contractReg)) {
+                    continue;
+                }
+                result.push_back(contract);
             }
             return result;
         }
@@ -44,6 +56,7 @@ class SymbolHolder {
     private:
         std::vector<CThostFtdcInstrumentField> symbols;
         boost::atomic<bool> ready = false;
+        std::regex contractReg;
         static std::shared_ptr<SymbolHolder> instance;
 };
 
