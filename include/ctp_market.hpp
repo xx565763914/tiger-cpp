@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <unistd.h>
+#include <boost/atomic.hpp>
 #include "ThostFtdcMdApi.h"
 #include "log.hpp"
 
@@ -41,6 +42,11 @@ class CtpMarket : public CThostFtdcMdSpi {
                 sleep(3);
             }
             LOG_INFO("subscribe succeed.");
+
+        }
+
+        bool isConnected() {
+            return connected;
         }
 
         // 交易所回调
@@ -52,6 +58,12 @@ class CtpMarket : public CThostFtdcMdSpi {
             login();
         }
         
+        // 登陆通知
+        void OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserLogin, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
+            LOG_INFO("行情登陆成功");
+            connected = true;
+        };
+
         // 订阅行情通知
         void OnRspSubMarketData(CThostFtdcSpecificInstrumentField *pSpecificInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
             // LOG_INFO("成功订阅 {0} {1}.", pSpecificInstrument->InstrumentID, pRspInfo->ErrorID);
@@ -73,7 +85,7 @@ class CtpMarket : public CThostFtdcMdSpi {
 
     private:
         CThostFtdcMdApi* md_ptr;
-
+        boost::atomic<bool> connected = false;
 };
 
 #endif

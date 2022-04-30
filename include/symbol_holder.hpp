@@ -2,6 +2,7 @@
 
 #include <boost/atomic.hpp>
 #include <vector>
+#include <memory>
 #include "log.hpp"
 #include "ThostFtdcTraderApi.h"
 
@@ -12,13 +13,13 @@ class SymbolHolder {
         }
 
         void setReady() {
-            ready.store(true);
+            ready = true;
             LOG_INFO("期货合约查询完毕..");
         }
 
         // 在这里不必纠结性能问题
         void addSymbol(CThostFtdcInstrumentField symbol) {
-            LOG_INFO("add symbol {0}.", symbol.InstrumentID);
+            LOG_INFO("查询到期货合约 {0}.", symbol.InstrumentID);
             symbols.push_back(symbol);
         }
 
@@ -36,14 +37,14 @@ class SymbolHolder {
             return result;
         }
 
-        static SymbolHolder* getInstance() {
+        static std::shared_ptr<SymbolHolder> getInstance() {
             return instance;
         }
 
     private:
         std::vector<CThostFtdcInstrumentField> symbols;
         boost::atomic<bool> ready = false;
-        static SymbolHolder* instance;
+        static std::shared_ptr<SymbolHolder> instance;
 };
 
-SymbolHolder* SymbolHolder::instance = new SymbolHolder();
+std::shared_ptr<SymbolHolder> SymbolHolder::instance = std::shared_ptr<SymbolHolder>(new SymbolHolder());

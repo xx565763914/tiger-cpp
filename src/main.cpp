@@ -63,12 +63,6 @@ class Sub1 : public Subscribe {
 
 int main(int argc, char ** argv) {
 
-    char *a = "xxxx";
-    std::vector<std::string> b = {a};
-    for (int i = 0; i < b.size(); i++) {
-        LOG_INFO("{0}", b[i]);
-    }
-
     // 配置
     // std::string md_dir = "./flow_md/";
     // std::string md_addr = "tcp://180.168.146.187:10130";
@@ -86,21 +80,21 @@ int main(int argc, char ** argv) {
     // }
     // sleep(3);
 
-    // if (strcmp(argv[1], "server") == 0) {
-    //     // server("ipc:///tmp/pubsub.ipc");
-    //     std::unique_ptr<Publish> pub(new Publish("ipc:///tmp/pubsub.ipc"));
-    //     for (int i = 0; i < 30; i++) {
-    //         pub->send("hello worldxxxxxxxx");
-    //         sleep(1);
-    //     }
-    // }
+    if (strcmp(argv[1], "server") == 0) {
+        // server("ipc:///tmp/pubsub.ipc");
+        std::unique_ptr<Publish> pub(new Publish("tcp://127.0.0.1:5555"));
+        for (int i = 0; i < 30; i++) {
+            pub->send("hello worldxxxxxxxx");
+            sleep(1);
+        }
+    }
 
-    // if (strcmp(argv[1], "client") == 0) {
-    //     // client("ipc:///tmp/pubsub.ipc", argv[2]);
-    //     std::string name(argv[2]);
-    //     Sub1 sub("ipc:///tmp/pubsub.ipc", name);
-    //     sub.run();
-    // }
+    if (strcmp(argv[1], "client") == 0) {
+        // client("ipc:///tmp/pubsub.ipc", argv[2]);
+        std::string name(argv[2]);
+        Sub1 sub("tcp://127.0.0.1:5555", name);
+        sub.run();
+    }
 
     // for (int i = 0; i < argc; i++) {
     //     std::cout<<argv[i]<<std::endl;

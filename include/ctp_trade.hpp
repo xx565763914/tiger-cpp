@@ -4,6 +4,7 @@
 #include <memory>
 #include <iostream>
 #include <unistd.h>
+#include <boost/atomic.hpp>
 #include "ThostFtdcTraderApi.h"
 #include "log.hpp"
 #include "tools/conv.hpp"
@@ -66,6 +67,10 @@ class CtpTrade : public CThostFtdcTraderSpi {
             }
         }
 
+        bool isConnected() {
+            return connected;
+        }
+
         // 交易所回调
 
         void OnFrontConnected() {
@@ -80,6 +85,7 @@ class CtpTrade : public CThostFtdcTraderSpi {
 
         void OnRspSettlementInfoConfirm(CThostFtdcSettlementInfoConfirmField *pSettlementInfoConfirm, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
             LOG_INFO("succeed to confirm settlement.");
+            connected = true;
         }
 
         void OnRspQryInstrument(CThostFtdcInstrumentField *pInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
@@ -89,10 +95,15 @@ class CtpTrade : public CThostFtdcTraderSpi {
             }
         }
 
+        void OnRspError(CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
+            LOG_ERROR("交易前置报错 {0}.", pRspInfo->ErrorMsg);
+        };
+
     private:
         CThostFtdcTraderApi *m_ptraderapi;
         std::string userId;
         std::string password;
         std::string brokerId;
         std::string investorId;
+        boost::atomic<bool> connected = false;
 };

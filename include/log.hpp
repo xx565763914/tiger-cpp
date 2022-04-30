@@ -54,18 +54,18 @@ class Log {
             }
         }
 
-        static Log* instance() {
+        static std::shared_ptr<Log> instance() {
             return Log::log;
         }
 
     private:
         std::shared_ptr<spd::logger> logger;
         bool useConsole = true;
-        static Log* log;
+        static std::shared_ptr<Log> log;
         std::string level = "debug";
 };
 
-Log* Log::log = new Log();
+std::shared_ptr<Log> Log::log = std::shared_ptr<Log>(new Log());
 
 // 有代码行号
 #define LOG_TRACE(...)      SPDLOG_LOGGER_CALL(Log::instance()->getLogger().get(), spdlog::level::trace, __VA_ARGS__)
