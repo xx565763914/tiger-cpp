@@ -61,7 +61,7 @@ int main() {
     LOG_INFO("all symbols length {0}.", SymbolHolder::getInstance()->getAllInstrument().size());
 
     // 准备要订阅的合约
-    std::vector<std::string> contracts = {"rb2210"};
+    std::vector<std::string> contracts;
     std::vector<std::string> allContracts = SymbolHolder::getInstance()->getAllInstrument();
     for (int i = 0; i < allContracts.size(); i++) {
         contracts.push_back(allContracts[i]);
