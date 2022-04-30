@@ -10,6 +10,7 @@ cppnanomsg
 
 boost
 
+nlohmann/json
 
 # usage
 
