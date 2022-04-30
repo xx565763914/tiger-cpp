@@ -13,6 +13,7 @@
 #include "log.hpp"
 #include "pubsub/pub.hpp"
 #include "config.hpp"
+#include "model/market.hpp"
 
 class MarketPub : public CtpMarket {
     public:
@@ -22,8 +23,9 @@ class MarketPub : public CtpMarket {
         }
 
         void OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarketData) {
-            LOG_INFO("receive market data {0}", pDepthMarketData->LastPrice);
-            std::string data = "receive market data: " + std::to_string(pDepthMarketData->LastPrice);
+            Tick tick(*pDepthMarketData);
+            LOG_INFO("receive market data {0}", tick.last_price);
+            std::string data = "receive market data: " + std::to_string(tick.last_price);
             pub->send(data);
         }
 

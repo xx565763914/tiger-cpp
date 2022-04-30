@@ -83,7 +83,7 @@ int main(int argc, char ** argv) {
     if (strcmp(argv[1], "server") == 0) {
         // server("ipc:///tmp/pubsub.ipc");
         std::unique_ptr<Publish> pub(new Publish("tcp://127.0.0.1:5555"));
-        for (int i = 0; i < 30; i++) {
+        for (;;) {
             pub->send("hello worldxxxxxxxx");
             sleep(1);
         }
