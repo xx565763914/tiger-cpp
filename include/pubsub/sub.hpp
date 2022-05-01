@@ -36,6 +36,7 @@ class Subscribe {
                 char *buf = NULL;
                 int bytes = sock->recv(&buf, NN_MSG, 0);
                 if (bytes < 0) {
+                    // sub没有接收到数据则忽略
                     LOG_ERROR("client {} failed to recv data.", this->name);
                     continue;
                 }
