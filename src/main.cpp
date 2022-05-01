@@ -1,7 +1,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <string>
-#include "ThostFtdcMdApi.h"
+#include <ctp/ThostFtdcMdApi.h>
 #include "ctp_market.hpp"
 #include "log.hpp"
 #include <nanomsg/nn.hpp>

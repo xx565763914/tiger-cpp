@@ -1,16 +1,8 @@
 # 依赖的组件
 
-spdlog
+sys: boost (need to install)
 
-ctp
-
-nanomsg
-
-cppnanomsg
-
-boost
-
-nlohmann/json
+deps: spdlog, ctp, nanomsg, cppnanomsg, nlohmann-json
 
 # usage
 

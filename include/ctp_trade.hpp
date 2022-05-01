@@ -5,7 +5,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <boost/atomic.hpp>
-#include "ThostFtdcTraderApi.h"
+#include <ctp/ThostFtdcTraderApi.h>
 #include "log.hpp"
 #include "tools/conv.hpp"
 #include "symbol_holder.hpp"

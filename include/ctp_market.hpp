@@ -6,7 +6,7 @@
 #include <string>
 #include <unistd.h>
 #include <boost/atomic.hpp>
-#include "ThostFtdcMdApi.h"
+#include <ctp/ThostFtdcMdApi.h>
 #include "log.hpp"
 
 class CtpMarket : public CThostFtdcMdSpi {

@@ -5,7 +5,7 @@
 #include <memory>
 #include <regex>
 #include "log.hpp"
-#include "ThostFtdcTraderApi.h"
+#include <ctp/ThostFtdcTraderApi.h>
 
 class SymbolHolder {
     public:
