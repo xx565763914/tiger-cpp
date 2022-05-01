@@ -45,7 +45,7 @@ int main() {
     std::string brokerId = Config::instance()->getBrokerId();
     std::string investorId = Config::instance()->getInvestorId();
 
-    // 初始化行情分发器
+    // 初始化行情分发器配置
     std::string url = Config::instance()->getMarketPubUrl();
 
     // 获取市场全部合约

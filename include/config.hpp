@@ -11,7 +11,12 @@ class Config {
     public:
         // 行情分发地址
         std::string getMarketPubUrl() {
-            return url;
+            return market_url;
+        }
+
+        // trader url地址
+        std::string getTraderUrl() {
+            return trader_url;
         }
 
         // 获取行情相关的配置
@@ -63,7 +68,10 @@ class Config {
         std::string investorId = "113458";
 
         // 初始化行情分发器
-        std::string url = "tcp://127.0.0.1:5555";
+        std::string market_url = "tcp://127.0.0.1:5555";
+
+        // 初始化trader地址
+        std::string trader_url = "tcp://127.0.0.1:8888";
         
         static std::shared_ptr<Config> config;
 };
