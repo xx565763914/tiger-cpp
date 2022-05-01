@@ -14,6 +14,7 @@
 #include "pubsub/pub.hpp"
 #include "config.hpp"
 #include "model/market.hpp"
+#include "bus/trader_business.hpp"
 
 class MarketPub : public CtpMarket {
     public:
@@ -47,15 +48,22 @@ int main() {
 
     // 初始化行情分发器配置
     std::string url = Config::instance()->getMarketPubUrl();
+    std::string traderUrl = Config::instance()->getTraderUrl();
 
-    // 获取市场全部合约
-    CtpTrade ctp_trade(userId, password, brokerId, investorId);
-    ctp_trade.connect(td_dir, td_addr);
-    while(!ctp_trade.isConnected()) {
+    // 初始化td
+    std::shared_ptr<CtpTrade> ctpTrade = std::shared_ptr<CtpTrade>(new CtpTrade(userId, password, brokerId, investorId));
+    ctpTrade->connect(td_dir, td_addr);
+    while(!ctpTrade->isConnected()) {
         LOG_INFO("等待交易前置连接成功......");
         sleep(3);
     }
-    ctp_trade.qryAllInstrument();
+
+    // 初始化trader
+    std::shared_ptr<TraderBusiness> tdBus = std::shared_ptr<TraderBusiness>(new TraderBusiness(traderUrl));
+    tdBus->runAsync();
+
+    //查询全市场合约行情
+    ctpTrade->qryAllInstrument();
     while(!SymbolHolder::getInstance()->isReady()) {
         sleep(1);
     }

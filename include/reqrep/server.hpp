@@ -4,6 +4,8 @@
 #include <nanomsg/reqrep.h>
 #include <unistd.h>
 #include <string>
+#include <thread>
+#include <memory>
 
 class RepServer {
 
@@ -39,9 +41,15 @@ class RepServer {
             }
         }
 
+        void runAsync() {
+            thread = std::shared_ptr<std::thread>(
+                new std::thread(&RepServer::run, this));
+        }
+
         virtual std::string notify(const std::string &recvData) = 0;
         
     private:
         std::string url;
         std::unique_ptr<nn::socket> sock;
+        std::shared_ptr<std::thread> thread;
 };

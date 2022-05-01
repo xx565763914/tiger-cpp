@@ -1,4 +1,5 @@
 import json
+import time
 from .sub_client import Sub
 from .req_client import ReqClient
 
@@ -26,13 +27,16 @@ class StrategyTemplate(Sub):
         ...
 
     def target_pos(self, instrument_id, target_pos):
-        target_pos = dict(
+        adj_pos = dict(
             ts_sec = int(time.time()),
             strategy_name = self.strategy_name,
             instrument_id = instrument_id,
             target_pos = target_pos
         )
-        target_pos_req = json.dumps(target_pos)
+        target_pos_req = json.dumps(dict(
+            event_type = "adj_pos",
+            event_data = adj_pos
+        ))
         # todo: 这里有坑，req函数可能抛出异常 从而导致策略进程失败
         self.trader_client.req(target_pos_req)
 
