@@ -22,7 +22,7 @@ char* date(void) {
 }
 
 void server(std::string url) {
-    nn::socket s = nn::socket(AF_SP, NN_PUB);
+    nn::socket s {AF_SP, NN_PUB};
     int eid = s.bind(url.c_str());
     for (int i = 0; i < 50; i++) {
         char *d = date();
@@ -34,7 +34,7 @@ void server(std::string url) {
 }
 
 void client(std::string url, std::string name) {
-    nn::socket s = nn::socket(AF_SP, NN_SUB);
+    nn::socket s {AF_SP, NN_SUB};
     s.setsockopt(NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
     s.connect(url.c_str());
     for (;;) {

@@ -7,7 +7,7 @@ set( CMAKE_BUILD_TYPE Release )
 
 # 设置编译选项
 # 允许c++11标准、O3优化、多线程。match选项可避免一些cpu上的问题
-set( CMAKE_CXX_FLAGS "-std=c++17 -march=native -O3 -pthread" )
+set( CMAKE_CXX_FLAGS "-std=c++11 -march=native -O3 -pthread" )
 
 #设定可执行二进制文件的目录
 SET( EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin) 

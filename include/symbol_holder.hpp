@@ -19,7 +19,7 @@ class SymbolHolder {
         }
 
         void setReady() {
-            ready = true;
+            ready.exchange(true);
             LOG_INFO("期货合约查询完毕..");
         }
 
@@ -55,7 +55,7 @@ class SymbolHolder {
 
     private:
         std::vector<CThostFtdcInstrumentField> symbols;
-        boost::atomic<bool> ready = false;
+        boost::atomic<bool> ready {false};
         std::regex contractReg;
         static std::shared_ptr<SymbolHolder> instance;
 };

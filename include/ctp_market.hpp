@@ -61,7 +61,7 @@ class CtpMarket : public CThostFtdcMdSpi {
         // 登陆通知
         void OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserLogin, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
             LOG_INFO("行情登陆成功");
-            connected = true;
+            connected.exchange(true);
         };
 
         // 订阅行情通知
@@ -85,7 +85,7 @@ class CtpMarket : public CThostFtdcMdSpi {
 
     private:
         CThostFtdcMdApi* md_ptr;
-        boost::atomic<bool> connected = false;
+        boost::atomic<bool> connected {false};
 };
 
 #endif

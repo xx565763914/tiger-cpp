@@ -85,7 +85,7 @@ class CtpTrade : public CThostFtdcTraderSpi {
 
         void OnRspSettlementInfoConfirm(CThostFtdcSettlementInfoConfirmField *pSettlementInfoConfirm, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
             LOG_INFO("succeed to confirm settlement.");
-            connected = true;
+            connected.exchange(true);
         }
 
         void OnRspQryInstrument(CThostFtdcInstrumentField *pInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
@@ -105,5 +105,5 @@ class CtpTrade : public CThostFtdcTraderSpi {
         std::string password;
         std::string brokerId;
         std::string investorId;
-        boost::atomic<bool> connected = false;
+        boost::atomic<bool> connected {false};
 };
