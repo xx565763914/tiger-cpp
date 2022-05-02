@@ -1,6 +1,6 @@
 # 依赖的组件
 
-sys: boost (need to install)
+sys: boost (need to install), nanomsg(for python)
 
 deps: spdlog, ctp, nanomsg, cppnanomsg, nlohmann-json
 
