@@ -15,23 +15,7 @@
 #include "config.hpp"
 #include "model/market.hpp"
 #include "bus/trader_business.hpp"
-
-class MarketPub : public CtpMarket {
-    public:
-
-        MarketPub(std::shared_ptr<Publish> pub) {
-            this->pub = pub;
-        }
-
-        void OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarketData) {
-            Tick tick(*pDepthMarketData);
-            json data = tick;
-            pub->send(data.dump());
-        }
-
-    private:
-        std::shared_ptr<Publish> pub;
-};
+#include "bus/market_business.hpp"
 
 int main() {
     // 初始化行情获取配置
@@ -76,11 +60,12 @@ int main() {
         contracts.push_back(allContracts[i]);
     }
 
-    // // 初始化行情分发器
-    std::shared_ptr<Publish> p(new Publish(url));
+    // 测试使用
+    contracts.clear();
+    contracts.push_back("rb2210");
 
     // 初始化ctp行情获取
-    std::shared_ptr<MarketPub> pub(new MarketPub(p));
+    std::shared_ptr<MarketPub> pub(new MarketPub(url));
     pub->connect(md_dir, md_addr);
     while(!pub->isConnected()) {
         LOG_INFO("等待行情前置连接成功......");
