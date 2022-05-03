@@ -6,6 +6,7 @@
 /**
     项目配置全部收敛于此
 **/
+
 class Config {
 
     public:
@@ -47,6 +48,10 @@ class Config {
             return investorId;
         }
 
+        std::string getConnectionUrl() {
+            return connectionUrl;
+        }
+
         // 单例模式
         static std::shared_ptr<Config> instance() {
             return config;
@@ -73,6 +78,10 @@ class Config {
         // 初始化trader地址
         std::string trader_url = "tcp://127.0.0.1:8888";
         
+        // 数据库相关配置
+        //dbname=tiger user=postgres password= hostaddr=127.0.0.1 port=5432
+        std::string connectionUrl = "dbname=tiger user=postgres password= hostaddr=127.0.0.1 port=5432";
+
         static std::shared_ptr<Config> config;
 };
 

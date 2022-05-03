@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <regex>
+#include <map>
 #include "log.hpp"
 #include <ctp/ThostFtdcTraderApi.h>
 
@@ -27,7 +28,8 @@ class SymbolHolder {
         void addSymbol(CThostFtdcInstrumentField symbol) {
             std::string contract = Conv::GBKToUTF8(symbol.InstrumentID);
             bool isMatch = std::regex_match(contract, contractReg);
-            LOG_INFO("查询到期货合约 {0} {1}.", symbol.InstrumentID, isMatch);
+            LOG_INFO("查询到期货合约 {0} {1} {2}.", symbol.InstrumentID, isMatch, symbol.ExchangeID);
+            symbolInfoMap[contract] = symbol;
             symbols.push_back(symbol);
         }
 
@@ -49,6 +51,13 @@ class SymbolHolder {
             return result;
         }
 
+        std::string getExchangeId(std::string instrumentId) {
+            if (symbolInfoMap.find(instrumentId) != symbolInfoMap.end()) {
+                return Conv::GBKToUTF8(symbolInfoMap[instrumentId].ExchangeID);
+            }
+            return "";
+        }
+
         static std::shared_ptr<SymbolHolder> getInstance() {
             return instance;
         }
@@ -58,6 +67,7 @@ class SymbolHolder {
         boost::atomic<bool> ready {false};
         std::regex contractReg;
         static std::shared_ptr<SymbolHolder> instance;
+        std::map<std::string, CThostFtdcInstrumentField> symbolInfoMap;
 };
 
 std::shared_ptr<SymbolHolder> SymbolHolder::instance = std::shared_ptr<SymbolHolder>(new SymbolHolder());

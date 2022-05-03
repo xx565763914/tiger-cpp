@@ -7,12 +7,15 @@
 #include <nanomsg/nn.hpp>
 #include <nanomsg/pubsub.h>
 #include <time.h>
+#include <pqxx/pqxx> 
 #include "pubsub/pub.hpp"
 #include "pubsub/sub.hpp"
 #include "ctp_trade.hpp"
 #include "tools/conv.hpp"
 #include "symbol_holder.hpp"
 #include "reqrep/server.hpp"
+#include "queue/blocking_queue.hpp"
+#include "pool/pg_pool.hpp"
 
 char* date(void) {
         time_t now = time(&now);
@@ -75,7 +78,38 @@ class ReqServer1 : public RepServer {
         }
 };
 
+// void threadfunc(std::shared_ptr<BlockingQueue<int>> q)
+// {
+//     sleep(2);
+//     q->put(10);
+//     q->put(5);
+// }
+
 int main(int argc, char ** argv) {
+
+    // std::shared_ptr<BlockingQueue<int>> q = std::shared_ptr<BlockingQueue<int>>(new BlockingQueue<int>());
+    // std::thread t1(threadfunc, q);
+    // q->take();
+    // int val = q->take();
+    // LOG_INFO("{0}", val);
+    // t1.join();
+    // sleep(3);
+
+    // pqxx::connection c{"postgresql://postgres@localhost:5432/tiger"};
+    //    try{
+    //       pqxx::connection C("dbname=tiger user=postgres password= hostaddr=127.0.0.1 port=5432");
+    //       if (C.is_open()) {
+    //          std::cout << "Opened database successfully: " << C.dbname() << std::endl;
+    //       } else {
+    //          std::cout << "Can't open database" << std::endl;
+    //          return 1;
+    //       }
+    //       C.disconnect ();
+    //       std::cout<<"xxxxxxx"<<std::endl;
+    //    }catch (const std::exception &e){
+    //       std::cerr << e.what() << std::endl;
+    //       return 1;
+    //    }
 
     // ReqServer1 s("tcp://127.0.0.1:8888");
     // s.run();
@@ -100,21 +134,21 @@ int main(int argc, char ** argv) {
     // }
     // sleep(3);
 
-    if (strcmp(argv[1], "server") == 0) {
-        // server("ipc:///tmp/pubsub.ipc");
-        std::unique_ptr<Publish> pub(new Publish("tcp://127.0.0.1:5555"));
-        for (;;) {
-            pub->send("hello worldxxxxxxxx");
-            sleep(1);
-        }
-    }
+    // if (strcmp(argv[1], "server") == 0) {
+    //     // server("ipc:///tmp/pubsub.ipc");
+    //     std::unique_ptr<Publish> pub(new Publish("tcp://127.0.0.1:5555"));
+    //     for (;;) {
+    //         pub->send("hello worldxxxxxxxx");
+    //         sleep(1);
+    //     }
+    // }
 
-    if (strcmp(argv[1], "client") == 0) {
-        // client("ipc:///tmp/pubsub.ipc", argv[2]);
-        std::string name(argv[2]);
-        Sub1 sub("tcp://127.0.0.1:5555", name);
-        sub.run();
-    }
+    // if (strcmp(argv[1], "client") == 0) {
+    //     // client("ipc:///tmp/pubsub.ipc", argv[2]);
+    //     std::string name(argv[2]);
+    //     Sub1 sub("tcp://127.0.0.1:5555", name);
+    //     sub.run();
+    // }
 
     // for (int i = 0; i < argc; i++) {
     //     std::cout<<argv[i]<<std::endl;

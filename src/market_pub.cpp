@@ -73,6 +73,7 @@ int main() {
     }
     pub->subscribe(contracts);
 
+    // 等待
     while(true) {
         sleep(1);
     }
