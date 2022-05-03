@@ -6,6 +6,7 @@ create table strategy_order(
     direction varchar(10),
     comb_offset varchar(10),
     instrument_id varchar(50),
+    price double precision,
     volume int,
     traded int,
     order_status varchar(20),

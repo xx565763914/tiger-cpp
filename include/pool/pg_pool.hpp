@@ -61,4 +61,4 @@ class PGConnectionPool {
 
 };
 
-std::shared_ptr<PGConnectionPool> PGConnectionPool::instance = std::shared_ptr<PGConnectionPool>(new PGConnectionPool(10));
+std::shared_ptr<PGConnectionPool> PGConnectionPool::instance = std::shared_ptr<PGConnectionPool>(new PGConnectionPool(5));

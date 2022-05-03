@@ -10,6 +10,9 @@
 #include "log.hpp"
 #include "tools/conv.hpp"
 #include "symbol_holder.hpp"
+#include "dao/strategy_order_dao.hpp"
+#include "tools/time_util.hpp"
+#include "const/order.hpp"
 
 class CtpTrade : public CThostFtdcTraderSpi {
     public:
@@ -81,7 +84,7 @@ class CtpTrade : public CThostFtdcTraderSpi {
         }
 
         // 报单相关 返回orderId
-        std::string buy(std::string instrumentId, double price, int volume) {
+        std::string buy(std::string strategyName, std::string instrumentId, double price, int volume) {
 
             std::string exchangeId = SymbolHolder::getInstance()->getExchangeId(instrumentId);
             std::string orderId = generateOrderId();
@@ -106,23 +109,164 @@ class CtpTrade : public CThostFtdcTraderSpi {
             ord.StopPrice = 0;
             ord.ForceCloseReason = THOST_FTDC_FCC_NotForceClose;
             ord.IsAutoSuspend = 0;
-            m_ptraderapi->ReqOrderInsert(&ord, requestId++);
 
             // 记录订单信息
-            
+            long long curSecs = getCurSecs();
+            StrategyOrder order;
+            order.order_id = orderId;
+            order.direction = Direction::LONG;
+            order.comb_offset = CombOffset::OPEN;
+            order.instrument_id = instrumentId;
+            order.price = price;
+            order.volume = volume;
+            order.traded = 0;
+            order.order_status = OrderStatus::CREATE;
+            order.strategy_name = strategyName,
+            order.create_time = curSecs;
+            order.update_time = curSecs;
+            StrategyOrderDao::createOrder(order);
+
+            // 发送订单请求
+            m_ptraderapi->ReqOrderInsert(&ord, requestId++);
             return orderId;
         }
 
-        std::string sell(std::string instrumentId, int volume) {
-            
+        std::string sell(std::string strategyName, std::string instrumentId, double price, int volume) {
+            std::string exchangeId = SymbolHolder::getInstance()->getExchangeId(instrumentId);
+            std::string orderId = generateOrderId();
+
+            CThostFtdcInputOrderField ord = { 0 };
+            strcpy(ord.BrokerID, const_cast<char*>(brokerId.c_str()));
+            strcpy(ord.InvestorID, const_cast<char*>(investorId.c_str())); 
+            strcpy(ord.ExchangeID, const_cast<char*>(exchangeId.c_str()));
+            strcpy(ord.InstrumentID, const_cast<char*>(instrumentId.c_str()));
+            strcpy(ord.UserID, const_cast<char*>(userId.c_str()));
+            strcpy(ord.OrderRef, const_cast<char*>(orderId.c_str()));
+            ord.OrderPriceType = THOST_FTDC_OPT_LimitPrice;//限价
+            ord.Direction = THOST_FTDC_D_Sell;//卖
+            ord.CombOffsetFlag[0] = THOST_FTDC_OF_Close;//平
+            ord.CombHedgeFlag[0] = THOST_FTDC_HF_Speculation;//投机
+            ord.LimitPrice = price;
+            ord.VolumeTotalOriginal = volume;
+            ord.TimeCondition = THOST_FTDC_TC_GFD;///当日有效
+            ord.VolumeCondition = THOST_FTDC_VC_AV;///任意数量
+            ord.MinVolume = 1;
+            ord.ContingentCondition = THOST_FTDC_CC_Immediately;
+            ord.StopPrice = 0;
+            ord.ForceCloseReason = THOST_FTDC_FCC_NotForceClose;
+            ord.IsAutoSuspend = 0;
+
+            // 记录订单信息
+            long long curSecs = getCurSecs();
+            StrategyOrder order;
+            order.order_id = orderId;
+            order.direction = Direction::SHORT;
+            order.comb_offset = CombOffset::CLOSE;
+            order.instrument_id = instrumentId;
+            order.price = price;
+            order.volume = volume;
+            order.traded = 0;
+            order.order_status = OrderStatus::CREATE;
+            order.strategy_name = strategyName,
+            order.create_time = curSecs;
+            order.update_time = curSecs;
+            StrategyOrderDao::createOrder(order);
+
+            // 发送订单请求
+            m_ptraderapi->ReqOrderInsert(&ord, requestId++);
+            return orderId;
         }
 
-        std::string sellShort(std::string instrumentId, int volume) {
+        std::string sellShort(std::string strategyName, std::string instrumentId, double price, int volume) {
+            std::string exchangeId = SymbolHolder::getInstance()->getExchangeId(instrumentId);
+            std::string orderId = generateOrderId();
 
+            CThostFtdcInputOrderField ord = { 0 };
+            strcpy(ord.BrokerID, const_cast<char*>(brokerId.c_str()));
+            strcpy(ord.InvestorID, const_cast<char*>(investorId.c_str())); 
+            strcpy(ord.ExchangeID, const_cast<char*>(exchangeId.c_str()));
+            strcpy(ord.InstrumentID, const_cast<char*>(instrumentId.c_str()));
+            strcpy(ord.UserID, const_cast<char*>(userId.c_str()));
+            strcpy(ord.OrderRef, const_cast<char*>(orderId.c_str()));
+            ord.OrderPriceType = THOST_FTDC_OPT_LimitPrice;//限价
+            ord.Direction = THOST_FTDC_D_Sell;//卖
+            ord.CombOffsetFlag[0] = THOST_FTDC_OF_Open;//开
+            ord.CombHedgeFlag[0] = THOST_FTDC_HF_Speculation;//投机
+            ord.LimitPrice = price;
+            ord.VolumeTotalOriginal = volume;
+            ord.TimeCondition = THOST_FTDC_TC_GFD;///当日有效
+            ord.VolumeCondition = THOST_FTDC_VC_AV;///任意数量
+            ord.MinVolume = 1;
+            ord.ContingentCondition = THOST_FTDC_CC_Immediately;
+            ord.StopPrice = 0;
+            ord.ForceCloseReason = THOST_FTDC_FCC_NotForceClose;
+            ord.IsAutoSuspend = 0;
+
+            // 记录订单信息
+            long long curSecs = getCurSecs();
+            StrategyOrder order;
+            order.order_id = orderId;
+            order.direction = Direction::SHORT;
+            order.comb_offset = CombOffset::OPEN;
+            order.instrument_id = instrumentId;
+            order.price = price;
+            order.volume = volume;
+            order.traded = 0;
+            order.order_status = OrderStatus::CREATE;
+            order.strategy_name = strategyName,
+            order.create_time = curSecs;
+            order.update_time = curSecs;
+            StrategyOrderDao::createOrder(order);
+
+            // 发送订单请求
+            m_ptraderapi->ReqOrderInsert(&ord, requestId++);
+            return orderId;
         }
 
-        std::string buyCover(std::string InstrumentId, int volume) {
-            
+        std::string buyCover(std::string strategyName, std::string instrumentId, double price, int volume) {
+            std::string exchangeId = SymbolHolder::getInstance()->getExchangeId(instrumentId);
+            std::string orderId = generateOrderId();
+
+            CThostFtdcInputOrderField ord = { 0 };
+            strcpy(ord.BrokerID, const_cast<char*>(brokerId.c_str()));
+            strcpy(ord.InvestorID, const_cast<char*>(investorId.c_str())); 
+            strcpy(ord.ExchangeID, const_cast<char*>(exchangeId.c_str()));
+            strcpy(ord.InstrumentID, const_cast<char*>(instrumentId.c_str()));
+            strcpy(ord.UserID, const_cast<char*>(userId.c_str()));
+            strcpy(ord.OrderRef, const_cast<char*>(orderId.c_str()));
+            ord.OrderPriceType = THOST_FTDC_OPT_LimitPrice;//限价
+            ord.Direction = THOST_FTDC_D_Buy;//买
+            ord.CombOffsetFlag[0] = THOST_FTDC_OF_Close;//平
+            ord.CombHedgeFlag[0] = THOST_FTDC_HF_Speculation;//投机
+            ord.LimitPrice = price;
+            ord.VolumeTotalOriginal = volume;
+            ord.TimeCondition = THOST_FTDC_TC_GFD;///当日有效
+            ord.VolumeCondition = THOST_FTDC_VC_AV;///任意数量
+            ord.MinVolume = 1;
+            ord.ContingentCondition = THOST_FTDC_CC_Immediately;
+            ord.StopPrice = 0;
+            ord.ForceCloseReason = THOST_FTDC_FCC_NotForceClose;
+            ord.IsAutoSuspend = 0;
+
+            // 记录订单信息
+            long long curSecs = getCurSecs();
+            StrategyOrder order;
+            order.order_id = orderId;
+            order.direction = Direction::LONG;
+            order.comb_offset = CombOffset::CLOSE;
+            order.instrument_id = instrumentId;
+            order.price = price;
+            order.volume = volume;
+            order.traded = 0;
+            order.order_status = OrderStatus::CREATE;
+            order.strategy_name = strategyName,
+            order.create_time = curSecs;
+            order.update_time = curSecs;
+            StrategyOrderDao::createOrder(order);
+
+            // 发送订单请求
+            m_ptraderapi->ReqOrderInsert(&ord, requestId++);
+            return orderId;
         }
 
         // 交易所回调
@@ -151,10 +295,32 @@ class CtpTrade : public CThostFtdcTraderSpi {
             }
         }
 
+        // 订单回报
+        void OnRtnOrder(CThostFtdcOrderField *pOrder) {
+            // 更新订单状态
+            long long curSecs = getCurSecs();
+            StrategyOrder order;
+            order.order_id = std::string(pOrder->OrderRef);
+            order.order_status = std::string(1, pOrder->OrderStatus);
+            order.update_time = curSecs;
+            StrategyOrderDao::updateOrderStatus(order);
+        }
+
+        // 理论上还应该有错误回报，不过当前更新了成交回报就可以满足诉求，后期可以加其他回报
+        void OnRtnTrade(CThostFtdcTradeField *pTrade) {
+            // 更新成交量
+            long long curSecs = getCurSecs();
+            StrategyOrder order;
+            order.order_id = std::string(pTrade->OrderRef);
+            order.traded = pTrade->Volume;
+            order.update_time = curSecs;
+            StrategyOrderDao::updateTrade(order);
+        }
+
         // 订单相关回报
         void OnRspError(CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
             LOG_ERROR("交易前置报错 {0}.", pRspInfo->ErrorMsg);
-        };
+        }
 
     private:
         CThostFtdcTraderApi *m_ptraderapi;

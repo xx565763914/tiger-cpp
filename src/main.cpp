@@ -16,6 +16,8 @@
 #include "reqrep/server.hpp"
 #include "queue/blocking_queue.hpp"
 #include "pool/pg_pool.hpp"
+#include "tools/string_util.hpp"
+#include "dao/strategy_order_dao.hpp"
 
 char* date(void) {
         time_t now = time(&now);
@@ -89,11 +91,43 @@ void test_get_conn() {
     std::shared_ptr<pqxx::connection> conn = PGConnectionPool::getInstance()->getConn();
 }
 
+    // std::string order_id;
+    // std::string direction;
+    // std::string comb_offset;
+    // std::string instrument_id;
+    // double price;
+    // int volume;
+    // int traded;
+    // std::string order_status;
+    // std::string strategy_name;
+    // long long create_time;
+    // long long update_time;
+
 int main(int argc, char ** argv) {
 
-    for (int i = 0; i < 1000000; i++) {
-        test_get_conn();
-    }
+    StrategyOrder order;
+    order.order_id = "test_order_id";
+    order.direction = "long";
+    order.comb_offset = "open";
+    order.instrument_id = "rb2210";
+    order.price = 89.3;
+    order.volume = 2;
+    order.traded = 0;
+    order.order_status = "create";
+    order.strategy_name = "unknow_strategy",
+    order.create_time = 1123123;
+    order.update_time = 123424;
+
+    StrategyOrderDao::createOrder(order);
+
+    order.order_status = "update_status";
+    StrategyOrderDao::updateOrderStatus(order);
+
+    order.traded = 2;
+    StrategyOrderDao::updateTrade(order);
+
+    // std::string a{"xxxx"};
+    // LOG_INFO("{0}", string_format("%s.", a.c_str()));
 
     // std::shared_ptr<BlockingQueue<int>> q = std::shared_ptr<BlockingQueue<int>>(new BlockingQueue<int>());
     // std::thread t1(threadfunc, q);
