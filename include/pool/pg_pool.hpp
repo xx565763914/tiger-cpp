@@ -27,16 +27,18 @@ class PGConnectionPool {
             }   
         }
 
-        std::shared_ptr<pqxx::connection*> getConn() {
+        std::shared_ptr<pqxx::connection> getConn() {
             pqxx::connection* conn = connectionQueue.take();
             if (!conn->is_open()) {
                 conn = getNewConnection();
             }
 
             auto releaseFunc = [&](pqxx::connection* connPtr){
-                 connectionQueue.put(connPtr);
+                LOG_INFO("释放数据库连接");
+                connectionQueue.put(connPtr);
             };
-            return std::shared_ptr<pqxx::connection*>(conn, releaseFunc);
+
+            return std::shared_ptr<pqxx::connection>(conn, releaseFunc);
         }
 
         static std::shared_ptr<PGConnectionPool> getInstance() {

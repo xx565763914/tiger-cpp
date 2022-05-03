@@ -85,7 +85,15 @@ class ReqServer1 : public RepServer {
 //     q->put(5);
 // }
 
+void test_get_conn() {
+    std::shared_ptr<pqxx::connection> conn = PGConnectionPool::getInstance()->getConn();
+}
+
 int main(int argc, char ** argv) {
+
+    for (int i = 0; i < 1000000; i++) {
+        test_get_conn();
+    }
 
     // std::shared_ptr<BlockingQueue<int>> q = std::shared_ptr<BlockingQueue<int>>(new BlockingQueue<int>());
     // std::thread t1(threadfunc, q);
