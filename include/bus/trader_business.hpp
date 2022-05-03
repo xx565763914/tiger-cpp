@@ -31,7 +31,9 @@ class TraderBusiness : public RepServer{
             return "ok: " + recvData;
         }
         
-
     private:
         std::shared_ptr<CtpTrade> ctpTrade;
 };
+
+
+

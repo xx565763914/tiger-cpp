@@ -105,26 +105,28 @@ void test_get_conn() {
 
 int main(int argc, char ** argv) {
 
-    StrategyOrder order;
-    order.order_id = "test_order_id";
-    order.direction = "long";
-    order.comb_offset = "open";
-    order.instrument_id = "rb2210";
-    order.price = 89.3;
-    order.volume = 2;
-    order.traded = 0;
-    order.order_status = "create";
-    order.strategy_name = "unknow_strategy",
-    order.create_time = 1123123;
-    order.update_time = 123424;
+    StrategyOrderDao::getOpenPosition("unknow_strategy");
 
-    StrategyOrderDao::createOrder(order);
+    // StrategyOrder order;
+    // order.order_id = "test_order_id";
+    // order.direction = "long";
+    // order.comb_offset = "open";
+    // order.instrument_id = "rb2210";
+    // order.price = 89.3;
+    // order.volume = 2;
+    // order.traded = 0;
+    // order.order_status = "create";
+    // order.strategy_name = "unknow_strategy",
+    // order.create_time = 1123123;
+    // order.update_time = 123424;
 
-    order.order_status = "update_status";
-    StrategyOrderDao::updateOrderStatus(order);
+    // StrategyOrderDao::createOrder(order);
 
-    order.traded = 2;
-    StrategyOrderDao::updateTrade(order);
+    // order.order_status = "update_status";
+    // StrategyOrderDao::updateOrderStatus(order);
+
+    // order.traded = 2;
+    // StrategyOrderDao::updateTrade(order);
 
     // std::string a{"xxxx"};
     // LOG_INFO("{0}", string_format("%s.", a.c_str()));

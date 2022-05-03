@@ -14,3 +14,9 @@ create table strategy_order(
     create_time bigint,
     update_time bigint
 );
+
+
+select 
+    (select case when sum(traded) is null then 0 else sum(traded) end from strategy_order where direction = 'long' and comb_offset = 'open') - (select case when sum(traded) is null then 0 else sum(traded) end from strategy_order where direction = 'short' and comb_offset = 'close') as long,
+    (select case when sum(traded) is null then 0 else sum(traded) end from strategy_order where direction = 'short' and comb_offset = 'open') - (select case when sum(traded) is null then 0 else sum(traded) end from strategy_order where direction = 'long' and comb_offset = 'close') as short;
+    

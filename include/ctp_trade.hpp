@@ -306,7 +306,6 @@ class CtpTrade : public CThostFtdcTraderSpi {
             StrategyOrderDao::updateOrderStatus(order);
         }
 
-        // 理论上还应该有错误回报，不过当前更新了成交回报就可以满足诉求，后期可以加其他回报
         void OnRtnTrade(CThostFtdcTradeField *pTrade) {
             // 更新成交量
             long long curSecs = getCurSecs();
@@ -316,6 +315,27 @@ class CtpTrade : public CThostFtdcTraderSpi {
             order.update_time = curSecs;
             StrategyOrderDao::updateTrade(order);
         }
+
+        // 订单填写错误回报
+        void OnRspOrderInsert(CThostFtdcInputOrderField *pInputOrder, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
+            // 更新订单状态
+            long long curSecs = getCurSecs();
+            StrategyOrder order;
+            order.order_id = std::string(pInputOrder->OrderRef);
+            order.order_status = OrderStatus::INVALID;
+            order.update_time = curSecs;
+            StrategyOrderDao::updateOrderStatus(order);
+        }
+
+         void OnErrRtnOrderInsert(CThostFtdcInputOrderField *pInputOrder, CThostFtdcRspInfoField *pRspInfo) {
+            // 更新订单状态
+            long long curSecs = getCurSecs();
+            StrategyOrder order;
+            order.order_id = std::string(pInputOrder->OrderRef);
+            order.order_status = OrderStatus::INVALID;
+            order.update_time = curSecs;
+            StrategyOrderDao::updateOrderStatus(order);
+         }
 
         // 订单相关回报
         void OnRspError(CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {

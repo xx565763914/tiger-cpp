@@ -23,5 +23,7 @@ std::string CombOffset::CLOSE = "close";
 class OrderStatus {
     public:
         static std::string CREATE;
+        static std::string INVALID;
 };
 std::string OrderStatus::CREATE = "create";
+std::string OrderStatus::INVALID = "invalid";

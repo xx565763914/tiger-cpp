@@ -29,6 +29,11 @@ struct StrategyOrder{
     long long update_time;
 };
 
+struct OpenPosition {
+    int long_position;
+    int short_position;
+};
+
 class StrategyOrderDao {
 
     public:
@@ -98,6 +103,33 @@ class StrategyOrderDao {
                 pqxx::work W(*conn.get());
                 W.exec(sql);
                 W.commit();
+            } catch (const std::exception &e) {
+                LOG_ERROR("更新订单成交失败. {0}.", e.what());
+                throw e;
+            }
+        }
+
+        static OpenPosition getOpenPosition(std::string strategy_name) {
+            // 分别统计多头头寸和空头头寸
+            std::string sqlTemplate = R"(
+                select 
+                    (select case when sum(traded) is null then 0 else sum(traded) end from strategy_order where direction = 'long' and comb_offset = 'open' and strategy_name = '%s') - (select case when sum(traded) is null then 0 else sum(traded) end from strategy_order where direction = 'short' and comb_offset = 'close' and strategy_name = '%s') as long,
+                    (select case when sum(traded) is null then 0 else sum(traded) end from strategy_order where direction = 'short' and comb_offset = 'open' and strategy_name = '%s') - (select case when sum(traded) is null then 0 else sum(traded) end from strategy_order where direction = 'long' and comb_offset = 'close' and strategy_name = '%s') as short;
+            )";
+            std::string sql = string_format(sqlTemplate.c_str(), strategy_name.c_str(), strategy_name.c_str(), 
+                strategy_name.c_str(), strategy_name.c_str());
+            try {
+                std::shared_ptr<pqxx::connection> conn = PGConnectionPool::getInstance()->getConn();
+                pqxx::work W(*conn.get());
+                pqxx::result R(W.exec(sql));
+                OpenPosition position;
+                for (pqxx::result::const_iterator c = R.begin(); c != R.end(); ++c) {
+                    position.long_position = c[0].as<int>();
+                    position.short_position = c[1].as<int>();
+                }
+                LOG_INFO("long {0} short {1}.", position.long_position, position.short_position);
+                W.commit();
+                return position;
             } catch (const std::exception &e) {
                 LOG_ERROR("更新订单成交失败. {0}.", e.what());
                 throw e;
