@@ -18,6 +18,7 @@
 #include "pool/pg_pool.hpp"
 #include "tools/string_util.hpp"
 #include "dao/strategy_order_dao.hpp"
+#include <junction/ConcurrentMap_Grampa.h>
 
 char* date(void) {
         time_t now = time(&now);
@@ -103,9 +104,22 @@ void test_get_conn() {
     // long long create_time;
     // long long update_time;
 
+struct Foo {
+};
+
 int main(int argc, char ** argv) {
 
-    StrategyOrderDao::getOpenPosition("unknow_strategy");
+    typedef junction::ConcurrentMap_Grampa<turf::u32, Foo*> ConcurrentMap;
+    ConcurrentMap myMap;
+
+    myMap.assign(14, new Foo);
+    Foo* foo = myMap.get(14);
+    foo = myMap.exchange(14, new Foo);
+    delete foo;
+    foo = myMap.erase(14);
+    delete foo;
+
+    // StrategyOrderDao::getOpenPosition("unknow_strategy");
 
     // StrategyOrder order;
     // order.order_id = "test_order_id";
