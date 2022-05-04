@@ -19,6 +19,8 @@
 #include "tools/string_util.hpp"
 #include "dao/strategy_order_dao.hpp"
 #include <junction/ConcurrentMap_Grampa.h>
+#include <junction/ConcurrentMap_Linear.h>
+#include <tbb/concurrent_hash_map.h>
 
 char* date(void) {
         time_t now = time(&now);
@@ -105,16 +107,32 @@ void test_get_conn() {
     // long long update_time;
 
 struct Foo {
+    std::string msg;
 };
 
 int main(int argc, char ** argv) {
 
-    typedef junction::ConcurrentMap_Grampa<turf::u32, Foo> ConcurrentMap;
-    ConcurrentMap myMap;
-    Foo foo;
-    myMap.assign(14, foo);
-    myMap.exchange(14, foo);
-    myMap.assign(15, foo);
+    
+    tbb::concurrent_hash_map<std::string, Foo> hashMap;
+    Foo foo{"this is value."};
+    tbb::concurrent_hash_map<std::string, Foo>::value_type hashMapValuePair("xxxx", foo);
+    hashMap.insert(hashMapValuePair);
+    Foo foo1{"xx"};
+    tbb::concurrent_hash_map<std::string, Foo>::value_type hashMapValuePair3("xxxx", foo1);
+    hashMap.insert(hashMapValuePair3);
+    tbb::concurrent_hash_map<std::string, Foo>::value_type hashMapValuePair1("ab", foo);
+    hashMap.insert(hashMapValuePair1);
+    LOG_INFO("map size: {0}.", hashMap.size());
+
+    tbb::concurrent_hash_map<std::string, Foo>::const_accessor hashAccessor;
+    if(hashMap.find(hashAccessor,"xxxx")){
+        std::cout << "find : " << std::endl;
+        std::cout << "key : " << hashAccessor->first << std::endl;
+        std::cout << "value : " << hashAccessor->second.msg << std::endl;
+    }
+
+    // myMap.exchange(14, foo);
+    // myMap.assign(15, foo);
     // Foo* foo = myMap.get(14);
     // foo = myMap.exchange(14, new Foo);
     // delete foo;

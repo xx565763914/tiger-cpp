@@ -13,6 +13,7 @@
 #include "dao/strategy_order_dao.hpp"
 #include "tools/time_util.hpp"
 #include "const/order.hpp"
+#include "symbol_tick_holder.hpp"
 
 class CtpTrade : public CThostFtdcTraderSpi {
     public:

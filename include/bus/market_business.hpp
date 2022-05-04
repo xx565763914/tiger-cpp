@@ -9,6 +9,7 @@
 #include "log.hpp"
 #include "pubsub/pub.hpp"
 #include "model/market.hpp"
+#include "symbol_tick_holder.hpp"
 
 /**
  * @brief 行情分发业务
@@ -24,6 +25,7 @@ class MarketPub : public CtpMarket {
         void OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarketData) {
             Tick tick(*pDepthMarketData);
             json data = tick;
+            SymbolTick::getInstance()->insertTick(tick);
             pub->send(data.dump());
         }
 
