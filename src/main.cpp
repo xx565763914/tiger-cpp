@@ -109,15 +109,17 @@ struct Foo {
 
 int main(int argc, char ** argv) {
 
-    typedef junction::ConcurrentMap_Grampa<turf::u32, Foo*> ConcurrentMap;
+    typedef junction::ConcurrentMap_Grampa<turf::u32, Foo> ConcurrentMap;
     ConcurrentMap myMap;
-
-    myMap.assign(14, new Foo);
-    Foo* foo = myMap.get(14);
-    foo = myMap.exchange(14, new Foo);
-    delete foo;
-    foo = myMap.erase(14);
-    delete foo;
+    Foo foo;
+    myMap.assign(14, foo);
+    myMap.exchange(14, foo);
+    myMap.assign(15, foo);
+    // Foo* foo = myMap.get(14);
+    // foo = myMap.exchange(14, new Foo);
+    // delete foo;
+    // foo = myMap.erase(14);
+    // delete foo;
 
     // StrategyOrderDao::getOpenPosition("unknow_strategy");
 
