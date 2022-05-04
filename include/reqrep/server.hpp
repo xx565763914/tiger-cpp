@@ -18,6 +18,10 @@ class RepServer {
             LOG_INFO("初始化RepServer成功");
         }
 
+        ~RepServer() {
+            LOG_INFO("RepServer开始析构.");
+        }
+
         void run() {
             char *buf = NULL;
             int bytes;
@@ -44,6 +48,8 @@ class RepServer {
         void runAsync() {
             thread = std::shared_ptr<std::thread>(
                 new std::thread(&RepServer::run, this));
+            // 设置为守护线程
+            thread->detach();
         }
 
         virtual std::string notify(const std::string &recvData) = 0;

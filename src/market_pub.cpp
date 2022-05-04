@@ -8,6 +8,7 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include <signal.h>
 #include "ctp_market.hpp"
 #include "ctp_trade.hpp"
 #include "log.hpp"
@@ -17,7 +18,19 @@
 #include "bus/trader_business.hpp"
 #include "bus/market_business.hpp"
 
+// bool exit_market_pub = false;
+
+// void signal_exit_handler(int sig)
+// {
+//     LOG_INFO("退出程序.");
+//     exit_market_pub = true;
+// }
+
 int main() {
+
+    // signal(SIGTERM, signal_exit_handler);
+    // signal(SIGINT, signal_exit_handler);
+
     // 初始化行情获取配置
     std::string md_dir = Config::instance()->getMdDir();
     std::string md_addr = Config::instance()->getMdAddr();
