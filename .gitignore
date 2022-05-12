@@ -130,3 +130,6 @@ CTestTestfile.cmake
 #Python
 __pycache__
 *.pyc
+
+#others
+.cache
