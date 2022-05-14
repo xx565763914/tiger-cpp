@@ -63,10 +63,12 @@ class Config {
         // 初始化行情获取配置
         std::string md_dir = ctp_dir;
         std::string md_addr = "tcp://180.168.146.187:10131";
+        // std::string md_addr = "tcp://180.168.146.187:10211";
 
         // 初始化交易配置
         std::string td_dir = ctp_dir;
         std::string td_addr = "tcp://180.168.146.187:10130";
+        // std::string td_addr = "tcp://180.168.146.187:10201";
         std::string userId = "113458";
         std::string password = "XX1024xx!@#$";
         std::string brokerId = "9999";
