@@ -15,7 +15,7 @@ class Test(tiger_strategy_wrapper.StrategyTemplate):
 
     def on_sub(self, data):
         # print(type(data))
-        print(data)
+        # print(data)
         # print(len(data))
         # self.target_pos('rb2010', 1)
 
