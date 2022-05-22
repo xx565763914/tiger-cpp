@@ -75,7 +75,7 @@ int main() {
 
     // 测试使用
     contracts.clear();
-    contracts.push_back("rb2210");
+    contracts.push_back("cu2305");
 
     // 初始化ctp行情获取
     std::shared_ptr<MarketPub> pub(new MarketPub(url));

@@ -23,15 +23,15 @@ class OneMinTimeBar(BaseBar):
         if self.check_date_time(bar_date_time):
             self._ticks.append( tick )
             cur_price = tick["last_price"]
-            self._bar["high"] = max(cur_price, self._bar["high"])
-            self._bar["low"] = min(cur_price, self._bar["low"])
+            self._bar["high_price"] = max(cur_price, self._bar["high_price"])
+            self._bar["low_price"] = min(cur_price, self._bar["low_price"])
             return True
         else:
             return False       
 
     def getBar(self) -> dict:
-        self._bar["open"] = self._ticks[0]["last_price"]
-        self._bar["close"] = self._ticks[-1]["last_price"]
+        self._bar["open_price"] = self._ticks[0]["last_price"]
+        self._bar["close_price"] = self._ticks[-1]["last_price"]
 
         self._bar["ask_price1"] = self._ticks[-1]["ask_price1"]
         self._bar["ask_volume1"] = self._ticks[-1]["ask_volume1"]

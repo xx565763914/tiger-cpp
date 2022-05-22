@@ -23,6 +23,7 @@ class Test(tiger_strategy_wrapper.StrategyTemplate):
             self.bar = OneMinTimeBar(data)
         elif not self.bar.addTick(data):
             print(self.bar.getBar())
+            self.bar.store_bar()
             self.bar = None
             
 
