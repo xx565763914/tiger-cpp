@@ -133,3 +133,5 @@ __pycache__
 
 #others
 .cache
+
+.vscode

@@ -8,6 +8,7 @@
 #include "log.hpp"
 
 
+// 该类废弃
 class Publish {
     /**
         1. 单次使用

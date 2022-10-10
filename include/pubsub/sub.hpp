@@ -19,7 +19,8 @@
     //     LOG_INFO("client {0} received {1}.", name, buf);
     //     nn::freemsg(buf);
     // }
-
+    
+// 该类废弃
 class Subscribe {
     public:
         Subscribe(std::string url, std::string name) {
