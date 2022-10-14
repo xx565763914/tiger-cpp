@@ -7,6 +7,7 @@
     项目配置全部收敛于此
 **/
 
+// 此类将会被淘汰
 class Config {
 
     public:

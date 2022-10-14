@@ -17,6 +17,7 @@
 #include "model/market.hpp"
 #include "bus/trader_business.hpp"
 #include "bus/market_business.hpp"
+#include "config/market_config_from_prop.hpp"
 
 // bool exit_market_pub = false;
 
@@ -27,6 +28,11 @@
 // }
 
 int main() {
+
+    MarketConfigFromProp conf;
+    LOG_INFO("t is {0}", conf.getConfig("t"));
+    // LOG_INFO("s is {0}", conf.getConfig("s"));
+    return 1;
 
     // signal(SIGTERM, signal_exit_handler);
     // signal(SIGINT, signal_exit_handler);
@@ -56,8 +62,8 @@ int main() {
     }
 
     // 初始化trader
-    std::shared_ptr<TraderBusiness> tdBus = std::shared_ptr<TraderBusiness>(new TraderBusiness(traderUrl));
-    tdBus->runAsync();
+    // std::shared_ptr<TraderBusiness> tdBus = std::shared_ptr<TraderBusiness>(new TraderBusiness(traderUrl));
+    // tdBus->runAsync();
 
     //查询全市场合约行情
     ctpTrade->qryAllInstrument();

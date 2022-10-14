@@ -15,11 +15,7 @@ class Log {
     public:
         Log() {
             const std::string loggerName = "spdlog";
-            if (useConsole) {
-                logger = spdlog::stdout_color_mt(loggerName);
-            } else {
-
-            }
+            logger = spdlog::rotating_logger_mt("spdlog", "logs/log.log", 1048576 * 5, 5);
         }
 
         ~Log() {
