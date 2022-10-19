@@ -4,9 +4,9 @@
 #include <map>
 #include <string>
 
-class Publish : public redis_base {
+class redisPublish : public redis_base {
 public:
-  Publish(std::string ip, std::int32_t port, std::string password = "")
+  redisPublish(std::string ip, std::int32_t port, std::string password = "")
       : redis_base(ip, port, password) {
     connect();
   };

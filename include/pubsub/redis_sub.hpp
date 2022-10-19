@@ -10,40 +10,35 @@
 #include <string>
 #include <vector>
 
-class Subscribe : public redis_base {
+class redisSubscribe : public redis_base {
 private:
   typedef moodycamel::BlockingConcurrentQueue<std::string>
       messageQueue; // blocking version
   std::unique_ptr<sw::redis::Subscriber> _sub{};
-  std::map<std::string, std::unique_ptr<messageQueue>> _chn_msgq;
+  std::unique_ptr<messageQueue> _msgq;
   std::atomic_bool _is_running;
 
 public:
-  Subscribe(std::string ip, std::int32_t port, std::string password = "")
-      : redis_base(ip, port, password), _is_running(false) {
+  redisSubscribe(std::string ip, std::int32_t port, std::string password = "")
+      : redis_base(ip, port, password), _is_running(false),
+        _msgq(new messageQueue) {
     connect();
     std::unique_ptr<sw::redis::Subscriber> new_sub{
         new sw::redis::Subscriber(instance()->subscriber())};
     _sub.swap(new_sub);
   };
 
-  void add_channel(std::string channel) {
-    _sub->subscribe(channel);
-    _chn_msgq[channel] = std::unique_ptr<messageQueue>(new messageQueue);
-  };
+  inline void add_channel(std::string channel) { _sub->subscribe(channel); };
 
   void run() {
     _sub->on_message([this](std::string channel, std::string msg) {
-      auto &msg_q = this->_chn_msgq[channel];
-      if (msg_q) {
-        msg_q->enqueue(msg);
-      } else {
-        // error log
-      }
+      LOG_TRACE("channel = ", channel.data(), ", message = ", msg.data());
+      auto &msg_q = this->_msgq;
+      msg_q->enqueue(msg);
     });
 
     if (_is_running.exchange(true)) {
-      LOG_ERROR("Subscribe has already running");
+      LOG_ERROR("redisSubscribe has already running");
       return;
     }
 
@@ -59,12 +54,14 @@ public:
     run();
   };
 
-  void stop() { _is_running.exchange(false); };
+  void stop() {
+    _is_running.exchange(false);
+    LOG_WARN("left message num = ", _msgq->size_approx());
+  };
 
-  std::string get_channel_message(std::string channel) {
-    auto &msg_q = _chn_msgq[channel];
+  std::string get_channel_message() {
     std::string ret;
-    msg_q->wait_dequeue(ret);
+    _msgq->wait_dequeue(ret);
     return {std::move(ret)};
   };
 };
