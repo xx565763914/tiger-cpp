@@ -56,7 +56,9 @@ public:
 
   void stop() {
     _is_running.exchange(false);
-    LOG_WARN("left message num = ", _msgq->size_approx());
+    std::string log =
+        "left message num = " + std::to_string(_msgq->size_approx());
+    LOG_WARN(log.data());
   };
 
   std::string get_channel_message() {

@@ -25,7 +25,7 @@ public:
   // virtual ~redis_base(){};
 
   void connect() {
-    ConnectionOptions connection_options{0x0};
+    ConnectionOptions connection_options;
     connection_options.host = _ip;
     connection_options.port = _port;
     connection_options.password = _passwd;
