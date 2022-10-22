@@ -6,6 +6,7 @@ PROJECT(cmake-test)                       #设定工程名
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
 endif()
+set(CMAKE_DEBUG_POSTFIX debug)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_VERBOSE_MAKEFILE 1)
