@@ -133,6 +133,7 @@ __pycache__
 
 #others
 .cache
+compile_commands.json
 
 .vscode
 .VSCodeCounter

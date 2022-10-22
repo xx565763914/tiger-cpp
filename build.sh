@@ -8,3 +8,4 @@ fi
 
 cd ${BUILD_DIR} && rm -rf ./*
 cmake .. $@ && make
+cp ${BUILD_DIR}/compile_commands.json ${SHELL_DIR}
