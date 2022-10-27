@@ -1,0 +1,39 @@
+simnow:
+  simulation: # 和生产时间一致
+    market:
+      -
+        protocol: &tcp tcp
+        ip: &ip1 180.168.146.187
+        port: 10201
+      -
+        protocol: *tcp
+        ip: *ip1
+        port: 10202
+      -
+        protocol: *tcp
+        ip: &ip2 218.202.237.33
+        port: 10203
+    trade:
+      -
+        protocol: *tcp
+        ip: *ip1
+        port: 10211
+      -
+        protocol: *tcp
+        ip: *ip1
+        port: 10212
+      -
+        protocol: *tcp
+        ip: *ip2
+        port: 10213
+  uninterruption: # 生产时间的补集
+    market:
+      -
+        protocol: *tcp
+        ip: *ip1
+        port: 10130
+    trade:
+      -
+        protocol: *tcp
+        ip: *ip1
+        port: 10131
