@@ -1,22 +1,9 @@
-simnow:
+simnow: &simnow
   simulation: # 和生产时间一致
     market:
       -
         protocol: &tcp tcp
         ip: &ip1 180.168.146.187
-        port: 10201
-      -
-        protocol: *tcp
-        ip: *ip1
-        port: 10202
-      -
-        protocol: *tcp
-        ip: &ip2 218.202.237.33
-        port: 10203
-    trade:
-      -
-        protocol: *tcp
-        ip: *ip1
         port: 10211
       -
         protocol: *tcp
@@ -24,16 +11,45 @@ simnow:
         port: 10212
       -
         protocol: *tcp
-        ip: *ip2
+        ip: &ip2 218.202.237.33
         port: 10213
+    trade:
+      -
+        protocol: *tcp
+        ip: *ip1
+        port: 10201
+      -
+        protocol: *tcp
+        ip: *ip1
+        port: 10202
+      -
+        protocol: *tcp
+        ip: *ip2
+        port: 10203
   uninterruption: # 生产时间的补集
     market:
       -
         protocol: *tcp
         ip: *ip1
-        port: 10130
+        port: 10131
     trade:
       -
         protocol: *tcp
         ip: *ip1
-        port: 10131
+        port: 10130
+  userID: 113458
+  password: XX1024xx!@#$
+  brokerID: 9999
+  investorID: 113458
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+using_address:  # 程序运行时使用的行情交易地址配置
+  ctp: *simnow
+  pattern: uninterruption
+  index: 1
+  dir: ./ctp/
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+market_data:
+  channel: MarketData
+  ip: 127.0.0.1
+  port: 6379
+  # passwrod: "your passwrod" # if have # TOFIX 这里暂时有点问题

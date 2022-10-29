@@ -25,5 +25,12 @@ int main(int argc, char *argvs[]) {
     std::cout << "\t trade url = " << trade_url << "\n";
   }
 
+  auto userID = conf["simnow"]["userID"];
+  auto password = conf["simnow"]["password"];
+  auto brokerID = conf["simnow"]["brokerID"];
+  auto investorID = conf["simnow"]["investorID"];
+  std::cout << userID << ", " << password << ", " << brokerID << ", "
+            << investorID << std::endl;
+
   return 0;
 }
