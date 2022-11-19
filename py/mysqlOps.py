@@ -19,7 +19,7 @@ class mysqlClient(object):
                 maxusage=1,
                 setsession=None, 
                 reset=True,
-                charset='utf8mb4'
+                charset='utf8'
       ):
         """
         :param mincached:连接池中空闲连接的初始数量
@@ -86,6 +86,7 @@ class mysqlClient(object):
         return count, result
 
     def execute(self, sql, param=()):
+        # print(sql)
         count, result = self.__execute(sql, param)
         return count, [mysqlClient.__dict_datetime_obj_to_str(row_dict) for row_dict in result]
 
@@ -97,14 +98,24 @@ class mysqlClient(object):
             result_dict.update(result_replace)
         return result_dict
 
-class mysqlOps:
-    pass
+class mysqlOps(mysqlClient):
+    def __init__(self, host: str, port: int, db: str, user: str, passwd: str):
+        super().__init__(host, port, db, user, passwd)
+
+    def create_market_data_table(self, table_name : str):
+        sql = "CREATE TABLE IF NOT EXISTS `{}` (\
+            `instrument_id` VARCHAR(8) NOT NULL,\
+            `td_update_datetime` DATETIME(3) NOT NULL,\
+            `raw_conent` Blob NOT NULL,\
+            UNIQUE KEY `instrument_datetime` (`instrument_id`,`td_update_datetime`) USING BTREE\
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8;".format(table_name)
+        return self.execute(sql)
 
 if __name__ == "__main__":
-    mysql_cli = mysqlClient(host="localhost", port=3306, 
-                            db="mysql",
-                            user="root", passwd="root")
-    # cnt, res_list = mysql_cli.execute("SHOW DATABASES;")
-    cnt, res_list = mysql_cli.execute("SELECT * FROM user")
+    mysql_opser = mysqlOps( host="localhost", port=3306, db="ctp",
+                            user="ctp", passwd="cttppp")
+    # cnt, res_list = mysql_opser.execute("SHOW DATABASES;")
+    cnt, res_list = mysql_opser.execute("SHOW DATABASES;")
     print(res_list)
     print(cnt, len(res_list))
+    print(mysql_opser.create_market_data_table("md_test_002"))

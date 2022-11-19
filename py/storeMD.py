@@ -1,5 +1,6 @@
 from yamlConfig import yamlConfig
 from redisSub import redisSub
+import json
 
 def sub_redis_to_store_market_data(cfg_file : str):
     cfg = yamlConfig(cfg_file)
@@ -13,7 +14,9 @@ def sub_redis_to_store_market_data(cfg_file : str):
     redis_suber.start()
 
     while 1:
-        print( redis_suber.get_msg() )
+        data_str = str(redis_suber.get_msg()['data'])
+        data_dict = json.loads(data_str)
+        print( data_dict )
 
 if __name__ == "__main__":
     sub_redis_to_store_market_data("/data/home/lervisnh/tiger-cpp/templates/configs/ctp.yaml")

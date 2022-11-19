@@ -48,8 +48,14 @@ using_address:  # 程序运行时使用的行情交易地址配置
   index: 1
   dir: ./ctp/
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-market_data:
+market_data: # from redis
   channel: MarketData
   ip: 127.0.0.1
   port: 6379
   # passwrod: "your passwrod" # if have # TOFIX 这里暂时有点问题
+store_md: # to mysql
+  ip: 127.0.0.1
+  port: 3306
+  database: ctp
+  user: ctp
+  passwrod: cttppp
