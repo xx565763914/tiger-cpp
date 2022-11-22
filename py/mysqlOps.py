@@ -1,5 +1,6 @@
 import pymysql
 import datetime
+import json
 from dbutils.pooled_db import PooledDB
 
 class mysqlClient(object):
@@ -16,7 +17,7 @@ class mysqlClient(object):
                 maxshared=10, 
                 maxconnections=200, 
                 blocking=True,
-                maxusage=1,
+                maxusage=None,
                 setsession=None, 
                 reset=True,
                 charset='utf8'
@@ -105,10 +106,21 @@ class mysqlOps(mysqlClient):
     def create_market_data_table(self, table_name : str):
         sql = "CREATE TABLE IF NOT EXISTS `{}` (\
             `instrument_id` VARCHAR(8) NOT NULL,\
-            `td_update_datetime` DATETIME(3) NOT NULL,\
+            `td_update_datetime` DATETIME(6) NOT NULL,\
             `raw_conent` Blob NOT NULL,\
             UNIQUE KEY `instrument_datetime` (`instrument_id`,`td_update_datetime`) USING BTREE\
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8;".format(table_name)
+        return self.execute(sql)
+
+    def add_tick(self, table_name : str, tick : str):
+        tick_dict = json.loads(tick)
+        dt = datetime.datetime.strptime(tick_dict['trading_day'] + tick_dict['update_time'], '%Y%m%d%H:%M:%S').replace(microsecond=tick_dict["update_millisec"])
+        # print(dt)
+        dt_str = dt.strftime('%Y-%m-%d %H:%M:%S.%f')
+        sql = "INSERT INTO {} (`instrument_id`,`td_update_datetime`,`raw_conent`) VALUES ('{}','{}','{}') ON DUPLICATE KEY UPDATE `raw_conent`='{}';".format(
+            table_name, tick_dict['instrument_id'], dt_str, tick, tick
+        )
+        # print(sql)
         return self.execute(sql)
 
 if __name__ == "__main__":
@@ -118,4 +130,8 @@ if __name__ == "__main__":
     cnt, res_list = mysql_opser.execute("SHOW DATABASES;")
     print(res_list)
     print(cnt, len(res_list))
-    print(mysql_opser.create_market_data_table("md_test_002"))
+    table_name = "md_test_003"
+    print(mysql_opser.create_market_data_table(table_name))
+    tick_str = "{\"ask_price1\":4872.0,\"ask_volume1\":1,\"bid_price1\":4868.0,\"bid_volume1\":30,\"close_price\":1.7976931348623157e+308,\"exchange_id\":\"\",\"exchange_inst_id\":\"\",\"highest_price\":4884.0,\"instrument_id\":\"ag2305\",\"last_price\":4872.0,\"lower_limit_price\":4355.0,\"lowest_price\":4821.0,\"open_interest\":19712.0,\"open_price\":4828.0,\"pre_close_price\":4837.0,\"pre_open_interest\":19623.0,\"pre_settlement_price\":4839.0,\"settlement_price\":1.7976931348623157e+308,\"trading_day\":\"20221122\",\"turnover\":216813465.0,\"update_millisec\":0,\"update_time\":\"22:29:07\",\"upper_limit_price\":5322.0,\"volume\":2973}"
+    print(mysql_opser.add_tick(table_name, tick_str))
+
