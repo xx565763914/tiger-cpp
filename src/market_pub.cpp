@@ -108,8 +108,8 @@ int main(int argc, char *argvs[]) {
   }
 
   // 测试使用
-  contracts.clear();
-  contracts.push_back("cu2305");
+  // contracts.clear();
+  // contracts.push_back("cu2305");
 
   // 初始化行情分发器配置
   auto market_data = (conf->get_config())["market_data"];

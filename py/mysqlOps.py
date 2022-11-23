@@ -112,7 +112,7 @@ class mysqlOps(mysqlClient):
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8;".format(table_name)
         return self.execute(sql)
 
-    def add_tick(self, table_name : str, tick : str):
+    def update_tick(self, table_name : str, tick : str) -> bool:
         tick_dict = json.loads(tick)
         dt = datetime.datetime.strptime(tick_dict['trading_day'] + tick_dict['update_time'], '%Y%m%d%H:%M:%S').replace(microsecond=tick_dict["update_millisec"])
         # print(dt)
@@ -121,7 +121,18 @@ class mysqlOps(mysqlClient):
             table_name, tick_dict['instrument_id'], dt_str, tick, tick
         )
         # print(sql)
-        return self.execute(sql)
+        return 1 == self.execute(sql)[0]
+
+    def load_all_ticks(self, table_name : str, instrument : str):
+        sql = "SELECT `raw_conent` FROM {} WHERE `instrument_id`='{}'".format(table_name, instrument)
+        num, rows = self.execute(sql)
+        ticks = []
+        for r in rows:
+            one_json_tick = json.loads(str(r['raw_conent'], encoding='utf-8'))
+            ticks.append( one_json_tick )
+        if num != len(ticks):
+            raise Exception("table {} loaded {} ticks num is inconsistent".format(table_name, instrument))
+        return ticks
 
 if __name__ == "__main__":
     mysql_opser = mysqlOps( host="localhost", port=3306, db="ctp",
@@ -132,6 +143,9 @@ if __name__ == "__main__":
     print(cnt, len(res_list))
     table_name = "md_test_003"
     print(mysql_opser.create_market_data_table(table_name))
-    tick_str = "{\"ask_price1\":4872.0,\"ask_volume1\":1,\"bid_price1\":4868.0,\"bid_volume1\":30,\"close_price\":1.7976931348623157e+308,\"exchange_id\":\"\",\"exchange_inst_id\":\"\",\"highest_price\":4884.0,\"instrument_id\":\"ag2305\",\"last_price\":4872.0,\"lower_limit_price\":4355.0,\"lowest_price\":4821.0,\"open_interest\":19712.0,\"open_price\":4828.0,\"pre_close_price\":4837.0,\"pre_open_interest\":19623.0,\"pre_settlement_price\":4839.0,\"settlement_price\":1.7976931348623157e+308,\"trading_day\":\"20221122\",\"turnover\":216813465.0,\"update_millisec\":0,\"update_time\":\"22:29:07\",\"upper_limit_price\":5322.0,\"volume\":2973}"
-    print(mysql_opser.add_tick(table_name, tick_str))
+    tick_str = "{\"ask_price1\":4872.0,\"ask_volume1\":1,\"bid_price1\":4868.0,\"bid_volume1\":30,\"close_price\":1.7976931348623157e+308,\"exchange_id\":\"\",\"exchange_inst_id\":\"\",\"highest_price\":4884.0,\"instrument_id\":\"ag2315\",\"last_price\":4872.0,\"lower_limit_price\":4355.0,\"lowest_price\":4821.0,\"open_interest\":19712.0,\"open_price\":4828.0,\"pre_close_price\":4837.0,\"pre_open_interest\":19623.0,\"pre_settlement_price\":4839.0,\"settlement_price\":1.7976931348623157e+308,\"trading_day\":\"20221122\",\"turnover\":216813465.0,\"update_millisec\":100,\"update_time\":\"22:29:07\",\"upper_limit_price\":5322.0,\"volume\":2973}"
+    print(mysql_opser.update_tick(table_name, tick_str))
+    ticks = mysql_opser.load_all_ticks(table_name, "ag2315")
+    for _ in ticks:
+        print(_, "\n") 
 

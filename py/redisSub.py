@@ -13,6 +13,7 @@ class redisSub(threading.Thread):
         # print("sub redis ip = {} port = {}".format(ip, port))
         self.__q = queue.Queue(maxsize = ( 1<<31 ))
         threading.Thread.__init__(self)
+        self.isDaemon()
 
     def sub_channel(self, channel : str) -> None:
         self.__redis_sub.subscribe(channel)
