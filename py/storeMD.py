@@ -12,7 +12,6 @@ def sub_redis_to_store_market_data(cfg_file : str):
     
     redis_suber = redisSub(ip=sub_redis_ip, port=sub_redis_port)
     redis_suber.sub_channel(sub_redis_chn)
-    redis_suber.start()
     sub_rsp = redis_suber.get_msg()
     # print(sub_rsp)
     if sub_rsp['type'] != 'subscribe' \
