@@ -34,6 +34,7 @@ int main(int argc, char *argvs[]) {
   std::shared_ptr<YamlConfigBase> conf;
   if (argc < 2) {
     std::cout << "Usage : " << argvs[0] << " <yaml-config-file>" << std::endl;
+    std::exit(EXIT_SUCCESS);
   }
   try {
     if (std::filesystem::exists(argvs[1])) {

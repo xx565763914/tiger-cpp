@@ -14,15 +14,17 @@ class redisSub(threading.Thread):
         self.__q = queue.Queue(maxsize = ( 1<<31 ))
         threading.Thread.__init__(self)
         self.setDaemon(True)
-        self.start()
 
     def sub_channel(self, channel : str) -> None:
-        self.__redis_sub.subscribe(channel)
+        ret = self.__redis_sub.subscribe(channel)
+        # print(ret)
         # print("sub redis chn = {}".format(channel))
 
     def __run(self) -> None:
+        # print("sub redis to listen")
         for msg in self.__redis_sub.listen():
             self.__q.put(msg)
+        # print("__run finished")
 
     def run(self) -> None:
         self.__run()
@@ -33,4 +35,5 @@ class redisSub(threading.Thread):
                 msg = self.__q.get(timeout=0.25)
                 return msg
             except queue.Empty:
+                # print("no subscribed data")
                 pass
