@@ -3,13 +3,13 @@ from redisSub import redisSub
 from mysqlOps import mysqlOps
 import json
 
-def sub_redis_to_store_market_data(cfg_file : str):
-    cfg = yamlConfig(cfg_file)
+def sub_redis_to_store_market_data(yaml_config_file : str):
+    cfg = yamlConfig(yaml_config_file)
     market_data = cfg.get_cfg("market_data")
     sub_redis_chn = market_data["channel"]
     sub_redis_ip = market_data["ip"]
     sub_redis_port = market_data["port"]
-    
+
     redis_suber = redisSub(ip=sub_redis_ip, port=sub_redis_port)
     redis_suber.sub_channel(sub_redis_chn)
     redis_suber.start()
@@ -38,4 +38,6 @@ def sub_redis_to_store_market_data(cfg_file : str):
                                                                     ))
 
 if __name__ == "__main__":
-    sub_redis_to_store_market_data("/data/home/lervisnh/tiger-cpp/templates/configs/ctp.yaml")
+    from fire import Fire
+    Fire(sub_redis_to_store_market_data)
+    # sub_redis_to_store_market_data("/data/home/lervisnh/tiger-cpp/templates/configs/ctp.yaml")
