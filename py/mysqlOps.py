@@ -115,7 +115,9 @@ class mysqlOps(mysqlClient):
     def update_tick(self, table_name : str, tick : str) -> bool:
         tick_dict = json.loads(tick)
         dt_str_splice = tick_dict['trading_day'] + tick_dict['update_time']
-        # print(dt_str_splice)
+        if len(dt_str_splice) < 16:
+            print(tick)
+            print(tick_dict['trading_day'], tick_dict['update_time'], dt_str_splice)
         dt = datetime.datetime.strptime(dt_str_splice, '%Y%m%d%H:%M:%S').replace(microsecond=tick_dict["update_millisec"])
         # print(dt)
         dt_str = dt.strftime('%Y-%m-%d %H:%M:%S.%f')
